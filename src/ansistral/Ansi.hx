@@ -1,7 +1,7 @@
 package ansistral;
 
-import AnsiColor;
-import AnsiTextAttribute;
+import ansistral.AnsiColor;
+import ansistral.AnsiTextAttribute;
 
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code

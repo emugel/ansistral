@@ -1,7 +1,7 @@
 package ansistral;
 
-import Ansi;
-import AnsiTextAttribute;
+import ansistral.Ansi;
+import ansistral.AnsiTextAttribute;
 
 /**
  * Just extend with "using".

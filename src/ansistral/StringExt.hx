@@ -1,7 +1,7 @@
 package ansistral;
 
 using StringTools;
-using grepsuzette.ansi.StringExt;
+using ansistral.StringExt;
 
 /**
  * Additional methods to String.
