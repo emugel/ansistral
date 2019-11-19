@@ -62,22 +62,23 @@ class StringExt {
         if (s.length == 0) return "";
         if (chars == null || chars.length == 0) return s;
 
-        var trimCodes : Array<Int> = inline codes(s);
-        var iStart = 0;
+        var trimCodes : Array<Int> = inline codes(chars);
+        var iStart = -1;
         var iEnd = s.length;
         var char : Int = -1;
 
+        var i = iStart;
         while (++i < s.length) { // find iStart
-            char = s.charCodeAt(i);
+            char = s.fastCodeAt(i);
             var bFound = false;
-            for (c in trimCodes) if (char == c) bFound = true;  
+            for (c in trimCodes) if (char == c) { bFound = true; break; }
             if (!bFound) break;
         }
         iStart = i;
         
         i = iEnd;
         while (--i >= 0) { // find iEnd
-            char = s.charCodeAt(i);
+            char = s.fastCodeAt(i);
             var bFound = false;
             for (c in trimCodes) if (char == c) bFound = true;  
             if (!bFound) break;
@@ -99,7 +100,6 @@ class StringExt {
 	
 	/**
 	 * Strip off the begining or base of a string if required 
-	 * UNTESTED 20140927-00:25
 	 */
 	public static function stripBase(s:String, toStrip:String):String {
 		return s.indexOf(toStrip) == 0 ? s.substr(toStrip.length) : s;
@@ -122,8 +122,8 @@ class StringExt {
         disableZero : Bool=false
 	) : String {
 		if (n == 0) return disableZero ? "" : "0";
-		if (n > 0) return "+" + n;
-		return cast n;
+        else if (n > 0) return "+" + n;
+        else return Std.string(n);
 	}
 
 	/**
@@ -187,7 +187,7 @@ class StringExt {
         }
         else {
             var codes : Array<Int> = inline codes(chars.toLowerCase());
-            var first : Int = s.charAt(0).toLowerCase().code;
+            var first : Int = s.charAt(0).toLowerCase().charCodeAt(0);  // very ugly, but I don't wish to use hex tricks
             for (code in codes) if (first == code) return true;
         }
         return false;
