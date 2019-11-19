@@ -1,0 +1,13 @@
+{
+  "name": "ansistral",
+  "url": "https://github.com/emugel/ansistral",
+  "license": "Apache",
+  "tags": ["ansi", "string"],
+  "description": "Mostly an extraction of Vegardit hx.strings.ansi package, with 2 additional light String classes",
+  "version": "0.0.1",
+  "releasenote": "wip",
+  "contributors": ["emugel"],
+  "dependencies": { 
+  },
+  "classPath": "src"
+}
