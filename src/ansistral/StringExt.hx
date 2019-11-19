@@ -1,4 +1,4 @@
-package grepsuzette.ansi;
+package ansistral;
 
 using StringTools;
 using grepsuzette.ansi.StringExt;

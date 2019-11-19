@@ -1,4 +1,4 @@
-package grepsuzette.ansi;
+package ansistral;
 
 import AnsiColor;
 import AnsiTextAttribute;

@@ -1,4 +1,4 @@
-package grepsuzette.ansi;
+package ansistral;
 
 /**
  * https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
