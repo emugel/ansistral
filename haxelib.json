@@ -4,8 +4,8 @@
   "license": "Apache",
   "tags": ["ansi", "string"],
   "description": "Mostly an extraction of Vegardit hx.strings.ansi package, with 2 additional light String classes",
-  "version": "0.0.1",
-  "releasenote": "wip",
+  "version": "0.0.2",
+  "releasenote": "tests now pass",
   "contributors": ["emugel"],
   "dependencies": { 
   },
