@@ -11,9 +11,22 @@ class StringExt {
 
     /**
      * "sun/moon".until("/") gives "sun".
+     * With Haxe 4 it works correctly with unicode.
      */
     public static function until(s:String, m:String):String {
         var i = s.indexOf(m);
+        return i == -1 
+            ? s
+            : s.substr(0, i)
+        ;
+    }
+
+    /**
+     * "sun/moon/earth".untilLast("/") gives "sun/moon".
+     * With Haxe 4 it works correctly with unicode.
+     */
+    public static function untilLast(s:String, m:String):String {
+        var i = s.lastIndexOf(m);
         return i == -1 
             ? s
             : s.substr(0, i)
@@ -34,6 +47,7 @@ class StringExt {
     /**
      * "sun/moon".after("/") gives "moon". 
      * An empty String is returned if no occurence was found.
+     * With Haxe 4 it works correctly with unicode.
      */
     public static function after(s:String, m:String):String {
         var i = s.indexOf(m);
@@ -42,6 +56,20 @@ class StringExt {
             : s.substr(i + 1)
         ;
     }
+
+    /**
+     * "sun/moon/earth".afterLast("/") gives "earth". 
+     * An empty String is returned if no occurence was found.
+     * With Haxe 4 it works correctly with unicode.
+     */
+    public static function afterLast(s:String, m:String):String {
+        var i = s.lastIndexOf(m);
+        return (i == -1) 
+            ? ""
+            : s.substr(i + 1)
+        ;
+    }
+
 
 	public static function endsWith(s:String, sub:String):Bool {
         #if haxe4 return inline StringTools.endsWith(s, sub);
@@ -97,6 +125,14 @@ class StringExt {
 		var l = s.length - toStrip.length;
 		return s.substr(l) == toStrip ? s.substr(0, l) : s;
 	}
+
+	/**
+	 * Strip off the file
+	 */
+	// public static function stripExt(s:String, toStrip:String):String {
+	// 	var l = s.length - toStrip.length;
+	// 	return s.substr(l) == toStrip ? s.substr(0, l) : s;
+	// }
 	
 	/**
 	 * Strip off the begining or base of a string if required 
