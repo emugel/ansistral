@@ -28,6 +28,9 @@ class TestStringExt {
             assertEq(StringExt.trimChars(a[0], a[1]), a[2]);
         }
 
+        var size = ansistral.Screen.detectSize();
+        assert(size.width > 0);
+        assert(size.height > 0);
 
         assertEq(StringExt.stripBase("path/to/filename.ext", "path/to/"), "filename.ext");
         assertEq(StringExt.stripBase("path/to/filename.ext", "foo.ext"), "path/to/filename.ext");
@@ -74,6 +77,7 @@ class TestStringExt {
         assertEq(StringExt.surround("lemon", "abc"), "abclemonabc");
         assertEq(StringExt.surround("lemon", "<b>", "</b>"), "<b>lemon</b>");
         assertEq(StringExt.boldhtml("lemon"), "<b>lemon</b>");
+
         Sys.println("test completed");
     }
 

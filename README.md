@@ -1,13 +1,12 @@
 # ansistral
 
-Personal lib, unrecommended to use.  These classes are partly taken from hx.strings.ansi (in Haxe) and the others are very modest additions to that (StringAnsi, StringExt). Everything sits in a stypid `ansistral` package. 
+Personal lib, still unrecommended to use for now. 
 
-The purpose of the lib is for me to not have to use the very big hx.strings.ansi package, and also to develop light String methods (mostly around the need for Ansi).
+Part of this lib use small defs taken from `hx.strings.ansi`, and add 3 new extension classes:
 
-Additions are really straightforward and you won't need this lib unless you want some features dealing with ansi length or center:
-
-1. **StringExt** contains vain methods such as `"sun,moon,earth".until(",")`, `"Mister:Bean".after(":")`, `"path/to/file.ext".stripExt(".ext")`, `"Isolated".surround("[]")`, `"My title".center(30)`.
-2. **StringAnsi** adds many static functions for extensions like `"today".blue().blink() + "the ".faint() + "sun".yellow().bold() + "shines".bold()`.
+* StringExt :: contains unessential methods such as `"sun,moon,earth".until(",")`, `"Mister:Bean".after(":")`, `"path/to/file.ext".stripExt(".ext")`, `"Isolated".surround("[]")`, `"My title".center(30)`.
+* StringAnsi :: adds many static functions for extensions like `"today".blue().blink() + "the ".faint() + "sun".yellow().bold() + "shines".bold()`,
+* Screen ::  detects terminal size on sys targets.
 
 
 # Disclaimer and copyright
