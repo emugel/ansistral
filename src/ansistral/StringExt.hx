@@ -3,6 +3,11 @@ package ansistral;
 using StringTools;
 using ansistral.StringExt;
 
+#if tink_core
+import tink.core.Pair;
+import tink.core.Outcome;
+#end;
+
 /**
  * Additional methods to String.
  * Public domain (copyleft) grepsuzette
@@ -143,21 +148,26 @@ class StringExt {
 	}
 
     /**
-     * Given String, split it into a Duet upon `charcode`, or fail.
-     * E.g. var out : Shoot<Duet> = "BTC/USD".splitUpon("/");
+     * Given String, split it into a Pair upon `charcode`, or fail.
+     * This requires the String to contain exactly 1 occurence of char.
+     * Only defined if tink_core is used.
+     * E.g. var out : Outcome<Pair, String> = "AAPL/USD".splitUpon("/");
+     * switch out {
+     *   case Success(pair): trace
+     *   case Failure(sErr): trace("error: " + sErr);
+     * }
      */
-    public static function splitUpon(s:String, char:String) : Shoot<Duet<String,String>> {
-        if (s == null) return Failure(Accident.of(Custom('cant splitUpon(null, $char)')));
-        if (char == null || char.length != 1) return Failure(Accident.of(Custom('cant splitUpon() because $char len !=1')));
+    if tink_core
+    public static function splitUpon(s:String, char:String) : tink.core.Pair<Duet<String,String>> {
+        if (s == null) return Failure('cant splitUpon(null, $char)');
+        if (char == null || char.length != 1) return Failure('cant splitUpon() because $char len !=1');
         var i = s.indexOf(char);
-        if (i <= 0) return Failure(Accident.of(Custom('can splitUpon($s, $char)')));
-        else return Success(new Duet(s.substr(0, i), s.substr(i + 1)));
+        if (i <= 0) return Failure('can splitUpon($s, $char)');
+        else return Failure(new tink.core.Pair(s.substr(0, i), s.substr(i + 1)));
     }
-	
+    #end
 
 	/**
-     * What is this piece of shit you will ask? Well arguably it has nothing to
-     * do here.
 	 * Forces sign in the result String, e.g. when `n` in >0, we get "+`n`".
 	 * @param (n) The number.
 	 * @param (Bool disableZero) Whether to show nothing if n == 0
