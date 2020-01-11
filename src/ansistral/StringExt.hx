@@ -22,29 +22,6 @@ class StringExt {
     }
 
     /**
-     * "sun/moon/earth".untilLast("/") gives "sun/moon".
-     * With Haxe 4 it works correctly with unicode.
-     */
-    public static function untilLast(s:String, m:String):String {
-        var i = s.lastIndexOf(m);
-        return i == -1 
-            ? s
-            : s.substr(0, i)
-        ;
-    }
-
-    /**
-     * "\t".times(3) gives 3 tabulations.
-     **/
-    public static inline function times(s:String, n:Int):String return repeat(s,n);
-    public static function repeat(s:String, n:Int):String {
-        if (n <= 0) return "";
-        var r = new StringBuf();
-        for (i in 0...n) r.add(s);
-        return r.toString();
-    }
-
-    /**
      * "sun/moon".after("/") gives "moon". 
      * An empty String is returned if no occurence was found.
      * With Haxe 4 it works correctly with unicode.
@@ -69,6 +46,30 @@ class StringExt {
             : s.substr(i + 1)
         ;
     }
+
+    /**
+     * "sun/moon/earth".untilLast("/") gives "sun/moon".
+     * With Haxe 4 it works correctly with unicode.
+     */
+    public static function untilLast(s:String, m:String):String {
+        var i = s.lastIndexOf(m);
+        return i == -1 
+            ? s
+            : s.substr(0, i)
+        ;
+    }
+
+    /**
+     * "\t".times(3) gives 3 tabulations.
+     **/
+    public static inline function times(s:String, n:Int):String return repeat(s,n);
+    public static function repeat(s:String, n:Int):String {
+        if (n <= 0) return "";
+        var r = new StringBuf();
+        for (i in 0...n) r.add(s);
+        return r.toString();
+    }
+
 
 
 	public static function endsWith(s:String, sub:String):Bool {
@@ -140,6 +141,19 @@ class StringExt {
 	public static function stripBase(s:String, toStrip:String):String {
 		return s.indexOf(toStrip) == 0 ? s.substr(toStrip.length) : s;
 	}
+
+    /**
+     * Given String, split it into a Duet upon `charcode`, or fail.
+     * E.g. var out : Shoot<Duet> = "BTC/USD".splitUpon("/");
+     */
+    public static function splitUpon(s:String, char:String) : Shoot<Duet<String,String>> {
+        if (s == null) return Failure(Accident.of(Custom('cant splitUpon(null, $char)')));
+        if (char == null || char.length != 1) return Failure(Accident.of(Custom('cant splitUpon() because $char len !=1')));
+        var i = s.indexOf(char);
+        if (i <= 0) return Failure(Accident.of(Custom('can splitUpon($s, $char)')));
+        else return Success(new Duet(s.substr(0, i), s.substr(i + 1)));
+    }
+	
 
 	/**
      * What is this piece of shit you will ask? Well arguably it has nothing to
