@@ -6,7 +6,7 @@ using ansistral.StringExt;
 #if tink_core
 import tink.core.Pair;
 import tink.core.Outcome;
-#end;
+#end
 
 /**
  * Additional methods to String.
@@ -78,7 +78,7 @@ class StringExt {
 
 
 	public static function endsWith(s:String, sub:String):Bool {
-        #if haxe4 return inline StringTools.endsWith(s, sub);
+        #if haxe4 return StringTools.endsWith(s, sub);
         #else return sub.length == 0 || s.lastIndexOf(sub) == s.length - sub.length;
         #end
 	}
@@ -157,13 +157,13 @@ class StringExt {
      *   case Failure(sErr): trace("error: " + sErr);
      * }
      */
-    if tink_core
-    public static function splitUpon(s:String, char:String) : tink.core.Pair<Duet<String,String>> {
+    #if tink_core
+    public static function splitUpon(s:String, char:String) : tink.core.Outcome<tink.core.Pair<String,String>, String> {
         if (s == null) return Failure('cant splitUpon(null, $char)');
         if (char == null || char.length != 1) return Failure('cant splitUpon() because $char len !=1');
         var i = s.indexOf(char);
         if (i <= 0) return Failure('can splitUpon($s, $char)');
-        else return Failure(new tink.core.Pair(s.substr(0, i), s.substr(i + 1)));
+        else return Success(new tink.core.Pair(s.substr(0, i), s.substr(i + 1)));
     }
     #end
 
