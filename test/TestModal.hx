@@ -203,9 +203,9 @@ class TestModal extends haxe.unit.TestCase {
 
         switch tui.menu(
             [ "mon", "tues", "wednes", "thurs", "fri", "sat", "sun" ]
-                .map(s -> new Duet( s+"day", s.length + 3 )),
-            "what's the longest day name? (names with 6 chars are grayed out)",
-            t -> t == 6 ? [GrayedOut] : []
+                .map(s -> new Duet( s+"day", s )),
+            "what's the longest day name? (thursday is grayed out)",
+            t -> t+"day".length == "thursday".length ? [GrayedOut] : []
         ) {
             case Success(duet_action_duetStringT):
                 switch duet_action_duetStringT.a {
