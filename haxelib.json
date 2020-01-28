@@ -1,13 +1,16 @@
 {
   "name": "ansistral",
   "url": "https://github.com/emugel/ansistral",
-  "license": "Apache",
-  "tags": ["ansi", "string"],
-  "description": "Mostly an extraction of Vegardit hx.strings.ansi package, with 2 additional light String classes",
-  "version": "0.0.3",
-  "releasenote": "added Screen.detectSize() (in characters, in a terminal)",
-  "contributors": ["emugel"],
+  "license": "",
+  "tags": ["ansi", "string", "modal", "tui", "scrolling menu", "console"],
+  "description": "Ansi is good for you.",
+  "version": "0.1.0",
+  "releasenote": "adding modal capabilities (most advanced one being a scrollable menu with customizable actions",
+  "contributors": ["grepsuzette"],
   "dependencies": { 
+      "tink_core":"1.25.0",
+      "lambada":"",
+      "unit":"1.0.0"
   },
   "classPath": "src"
 }

@@ -1,0 +1,4 @@
+# @install: lix --silent download "gh://github.com/emugel/lambada#b9246cc7b53fefaf35a380433d60bebf1ab00739" into lambada/0.0.1/github/b9246cc7b53fefaf35a380433d60bebf1ab00739
+-lib tink_core
+-cp ${HAXE_LIBCACHE}/lambada/0.0.1/github/b9246cc7b53fefaf35a380433d60bebf1ab00739/.
+-D lambada=0.0.1

@@ -2,20 +2,12 @@ package test;
 
 import ansistral.StringExt;
 
-class TestStringExt {
+class TestStringExt extends haxe.unit.TestCase {
 
-    public static function assert(cond:Bool, ?pos:haxe.PosInfos ) : Void 
-        if (!cond) Sys.println("assertion failed at " + 
-                (pos == null ? "?" :  pos.fileName + ":" + pos.lineNumber)
-            );
+    public function assert(cond:Bool, ?pos:haxe.PosInfos ) assertTrue(cond, pos);
+    public function assertEq(a:Dynamic, b:Dynamic, ?pos:haxe.PosInfos ) assertEquals(a, b, pos);
 
-    public static function assertEq(d1:Dynamic, d2:Dynamic, ?pos:haxe.PosInfos ) : Void 
-        if (d1 != d2) Sys.println("assertion failed at " + 
-                (pos == null ? "?" :  pos.fileName + ":" + pos.lineNumber) +
-                ' "${Std.string(d1)}" != "${Std.string(d2)}"'
-            );
-
-    public static function main() {
+    public function test_stringext() {
         for (a in [
             // entry                charsToTrim expected
             ["  To be or not  ",    " ",        "To be or not"],
@@ -77,8 +69,6 @@ class TestStringExt {
         assertEq(StringExt.surround("lemon", "abc"), "abclemonabc");
         assertEq(StringExt.surround("lemon", "<b>", "</b>"), "<b>lemon</b>");
         assertEq(StringExt.boldhtml("lemon"), "<b>lemon</b>");
-
-        Sys.println("test completed");
     }
 
 

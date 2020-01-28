@@ -2,7 +2,8 @@ package ansistral;
 
 /**
  * Term size detection for different sys targets (and OS).
- * This is very incomplete feel free to contribute.
+ * This is very basic and hasn't even been tested on window. 
+ * Feel free to contribute.
  */
 class Screen {
 

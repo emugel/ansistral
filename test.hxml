@@ -1,4 +1,7 @@
 -cp test
 -cp src
--main test.TestStringExt
+-lib unit
+-lib tink_core
+-lib lambada
+-main test.Runner
 -neko t.n
