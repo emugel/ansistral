@@ -238,11 +238,14 @@ class ModalAnsistral implements ansistral.modal.IModal {
      *   J: up fast
      *   K: down fast
      *   /: search down
-     *   n: jump to next search occurence
-     *   N: jump to previous search occurence
-     *   L: jump to bottom (low)
+     *   ?: search backwards
+     *   n: jump to next search result
+     *   N: jump to previous search result
+     *   *   L: jump to bottom (low)
      *   H: jump to top (high)
      *   M: jump to middle
+     *
+     * @note With library slre, search will strip accents before comparing
      *
      * @param (Array<String> aAdditionalActions)
      *          E.g. ["&list", "&delete"]
@@ -335,9 +338,21 @@ class ModalAnsistral implements ansistral.modal.IModal {
             // using ringModulo() array `a` can be worked upon as if infinite ring
             var stopAt = nCur + (bInvertDirec ? -1 : 1) * a.length;
             while ( bInvertDirec ? --nCur > stopAt : ++nCur < stopAt) {
-                if (a[ringModulo(nCur - headerH, a.length)].indexOf(sSearchPatt) >= 0) {
+                #if (!slre)
+                if (a[ringModulo(nCur - headerH, a.length)].toLowerCase().indexOf(sSearchPatt).toLowerCase() >= 0) {
                     return ringModulo(nCur - headerH, a.length);
                 }
+                #else
+                // strip accents if lib slre is used
+                if ((grepsuzette.slre.Tools.stripAccents(
+                        a[ringModulo(nCur - headerH, a.length)]
+                    ).toLowerCase().indexOf( 
+                        grepsuzette.slre.Tools.stripAccents(sSearchPatt).toLowerCase()
+                    ) >= 0
+                )) {
+                    return ringModulo(nCur - headerH, a.length);
+                }
+                #end
             }
             return ringModulo(nCur - headerH, a.length);   // actually equals to original nCur
         }
