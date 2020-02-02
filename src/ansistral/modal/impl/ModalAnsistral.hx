@@ -362,21 +362,6 @@ class ModalAnsistral implements ansistral.modal.IModal {
                 if (_match( a[ringModulo(nCur - headerH, a.length)], sSearchPatt )) {
                     return ringModulo(nCur - headerH, a.length);
                 }
-                // #if (!slre)
-                // if (.toLowerCase().indexOf(sSearchPatt).toLowerCase() >= 0) {
-                //     return ringModulo(nCur - headerH, a.length);
-                // }
-                // #else
-                // // strip accents if lib slre is used
-                // if ((grepsuzette.slre.Tools.stripAccents(
-                //         a[ringModulo(nCur - headerH, a.length)]
-                //     ).toLowerCase().indexOf( 
-                //         grepsuzette.slre.Tools.stripAccents(sSearchPatt).toLowerCase()
-                //     ) >= 0
-                // )) {
-                //     return ringModulo(nCur - headerH, a.length);
-                // }
-                // #end
             }
             return ringModulo(nCur - headerH, a.length);   // actually equals to original nCur
         }
