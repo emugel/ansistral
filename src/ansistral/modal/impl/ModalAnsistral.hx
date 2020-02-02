@@ -337,22 +337,46 @@ class ModalAnsistral implements ansistral.modal.IModal {
             nCur += headerH;
             // using ringModulo() array `a` can be worked upon as if infinite ring
             var stopAt = nCur + (bInvertDirec ? -1 : 1) * a.length;
-            while ( bInvertDirec ? --nCur > stopAt : ++nCur < stopAt) {
-                #if (!slre)
-                if (a[ringModulo(nCur - headerH, a.length)].toLowerCase().indexOf(sSearchPatt).toLowerCase() >= 0) {
-                    return ringModulo(nCur - headerH, a.length);
-                }
-                #else
-                // strip accents if lib slre is used
-                if ((grepsuzette.slre.Tools.stripAccents(
-                        a[ringModulo(nCur - headerH, a.length)]
-                    ).toLowerCase().indexOf( 
-                        grepsuzette.slre.Tools.stripAccents(sSearchPatt).toLowerCase()
-                    ) >= 0
-                )) {
-                    return ringModulo(nCur - headerH, a.length);
-                }
+
+            /**
+             * Whether s2 matches s1.
+             * if -lib slre, strip accent before comparing
+             * @param (s1) The candidate
+             * @param (s2) The (text) pattern
+             *                        if `s2` contains no chars in `[A-Z]`, 
+             *                        search is case-insensitive
+             */
+            function _match(s1, s2) : Bool {
+                #if slre
+                s1 = grepsuzette.slre.Tools.stripAccents(s1);
+                s2 = grepsuzette.slre.Tools.stripAccents(s2);
                 #end
+                if (! ~/[A-Z]/.match(s2)) {
+                    s1 = s1.toLowerCase();
+                    s2 = s2.toLowerCase();
+                }
+                return s1.indexOf(s2) >= 0;
+            }
+
+            while ( bInvertDirec ? --nCur > stopAt : ++nCur < stopAt) {
+                if (_match( a[ringModulo(nCur - headerH, a.length)], sSearchPatt )) {
+                    return ringModulo(nCur - headerH, a.length);
+                }
+                // #if (!slre)
+                // if (.toLowerCase().indexOf(sSearchPatt).toLowerCase() >= 0) {
+                //     return ringModulo(nCur - headerH, a.length);
+                // }
+                // #else
+                // // strip accents if lib slre is used
+                // if ((grepsuzette.slre.Tools.stripAccents(
+                //         a[ringModulo(nCur - headerH, a.length)]
+                //     ).toLowerCase().indexOf( 
+                //         grepsuzette.slre.Tools.stripAccents(sSearchPatt).toLowerCase()
+                //     ) >= 0
+                // )) {
+                //     return ringModulo(nCur - headerH, a.length);
+                // }
+                // #end
             }
             return ringModulo(nCur - headerH, a.length);   // actually equals to original nCur
         }
