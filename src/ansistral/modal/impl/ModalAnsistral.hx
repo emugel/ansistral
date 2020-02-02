@@ -4,6 +4,7 @@ import ansistral.modal.Modal;
 import tink.CoreApi;
 import lambada.Duet;
 import lambada.Trio;
+using StringTools;
 import Sys.println as pp;
 using ansistral.StringExt;
 using ansistral.StringAnsi;
@@ -22,6 +23,10 @@ class ModalAnsistral implements ansistral.modal.IModal {
     public function isInteractive() : Bool return true;
     public function new() {
         this._offsetPerMenu = new Map<String, Int>();
+
+        // for menu()
+        this._bInvertDirection = false;
+        this._sSearchPatt = "";
     }
 
     public function promptYesNo(
@@ -217,8 +222,28 @@ class ModalAnsistral implements ansistral.modal.IModal {
         return Failure(new Error("failed prompt"));
     }
 
+
+    // vars for menu
+    var _bInvertDirection : Bool;
+    var _sSearchPatt : String;
+
     /**
      * A menu with actions than just "quit" and "select".
+     * Until a stable version is reached, some keys are hardwired, those are
+     * vim-like keys:
+     *   RETURN: select
+     *   q: cancel
+     *   j: up
+     *   k: down
+     *   J: up fast
+     *   K: down fast
+     *   /: search down
+     *   n: jump to next search occurence
+     *   N: jump to previous search occurence
+     *   L: jump to bottom (low)
+     *   H: jump to top (high)
+     *   M: jump to middle
+     *
      * @param (Array<String> aAdditionalActions)
      *          E.g. ["&list", "&delete"]
      *          On TUI this will tip and accept 
@@ -233,6 +258,9 @@ class ModalAnsistral implements ansistral.modal.IModal {
      *      You may ["-cancel", "-select"] or one of them only,
      *        to disable default selection or cancellation. This would
      *        allow creating weird hybrids.
+     *
+     *      "&\t:foo" is a special value for TAB key, displayed as "TAB:foo" and
+     *        recognized as the "TAB" action.
      * @param (MenuOffset) to optionally remember position between calls
      * @return (Outcome<Duet<String, Duet<String, T>>, Error>),
      *          e.g. new Duet("list", new Duet("my selected value", 5))
@@ -255,8 +283,11 @@ class ModalAnsistral implements ansistral.modal.IModal {
         if (aAdditionalActions == null) aAdditionalActions = [];
         var disableSelect = aAdditionalActions.has("-select");
         var disableCancel = aAdditionalActions.has("-cancel");
+        var keyHavingTabOrNull : Null<String> = aAdditionalActions.find( s -> s.startsWith("&\t"));
         aAdditionalActions.remove("-select");
         aAdditionalActions.remove("-cancel");
+        if (keyHavingTabOrNull != null)
+            aAdditionalActions.remove(keyHavingTabOrNull);
 
         function _findHintCode(s:String) : Int { // {{{3 "go&to" 
             // It can not fail.
@@ -275,8 +306,8 @@ class ModalAnsistral implements ansistral.modal.IModal {
         ;
         for (key in hintCodes) {
             switch key {
-                case "j".code | "k".code | "J".code | "K".code | "M".code | "L".code | "H".code: 
-                    return Failure(new Error("Can not use hints j,k,J,L,H,K,M in menus: " 
+                case "j".code | "k".code | "J".code | "K".code | "M".code | "L".code | "H".code | "/".code | "n".code | "N".code | "?".code: 
+                    return Failure(new Error("Can not use hints j,k,J,L,H,K,M,n,N,/,? in menus: " 
                             + key + " in " + aAdditionalActions.join(", ")
                     ));
                 case "q".code if (!disableCancel):
@@ -287,12 +318,37 @@ class ModalAnsistral implements ansistral.modal.IModal {
             }
         }  // }}}3
 
+        var dblBuf = new Array<String>();
+        var headerH = 0;            // header height in dblBuf
+
+        /**
+         * Search in menu, circular, back or forth.
+         * @param (String sSearchPatt) a mere text search for now
+         * @param (Bool bInvertDirec) true to search backwards
+         * @param (Int nCur) current menuitem index (cur)
+         * @return (Int) new index. Same as nCur if unfound.
+         */
+        function _searchInMenu(sSearchPatt, bInvertDirec, nCur) : Int {  // return index in dblBuf
+            // we don't want to work on dblBuf because it contains header
+            var a = dblBuf.slice(headerH); 
+            nCur += headerH;
+            // using ringModulo() array `a` can be worked upon as if infinite ring
+            var stopAt = nCur + (bInvertDirec ? -1 : 1) * a.length;
+            while ( bInvertDirec ? --nCur > stopAt : ++nCur < stopAt) {
+                if (a[ringModulo(nCur - headerH, a.length)].indexOf(sSearchPatt) >= 0) {
+                    return ringModulo(nCur - headerH, a.length);
+                }
+            }
+            return ringModulo(nCur - headerH, a.length);   // actually equals to original nCur
+        }
+        /**
+         * Redraw function.
+         */
         function _redraw(indexCurrentLine:Int=0, screenW:Int, screenH:Int) {
             // redraw all menu, e.g. when j/k are pressed,
             //   or when screenW or screenH changes
 
-            var dblBuf = new Array<String>();
-
+            dblBuf = [];
             dblBuf.push(
                 Ansi.clearScreen() + 
                 // Ansi.cursor(RestorePos) +
@@ -300,11 +356,14 @@ class ModalAnsistral implements ansistral.modal.IModal {
             );
 
             dblBuf.push("Keys: " +      // {{{3 keys help
-                [ new Duet("down", "j"), 
-                  new Duet("up",   "k"),  
+                [ new Duet("down"    , "j"),
+                  new Duet("up"      , "k"),
+                  new Duet("search"  , "/"),
+                  new Duet("next"    , "n"),
                 ]
                 .concat( disableSelect ? [] : [new Duet("select", "ENTER")] )
                 .concat( disableCancel ? [] : [new Duet("cancel", "q")] )
+                .concat( keyHavingTabOrNull == null ? [] : [new Duet(keyHavingTabOrNull.after(":"), "TAB")] )
                 .concat(
                     aAdditionalActions
                         .filter( s -> s != null && s.length >= 1 )
@@ -322,7 +381,7 @@ class ModalAnsistral implements ansistral.modal.IModal {
                  .join(" ".faint())
             );
             dblBuf.push("-------------------------------------------------------"); // }}}3
-            var headerH = dblBuf.length;
+            headerH = dblBuf.length;
 
             if (items.length == 0) {        // {{{3 dblBuf populating (content)
                 dblBuf.push("(It's empty...)"); 
@@ -389,6 +448,7 @@ class ModalAnsistral implements ansistral.modal.IModal {
                 var savedOffset : Null<Int> = _offsetPerMenu[menuOffsetId];
                 if (savedOffset == null) 0 else savedOffset;
         };
+
         while (true) {
             _redraw( 
                 cur,
@@ -403,6 +463,11 @@ class ModalAnsistral implements ansistral.modal.IModal {
                 case "K".code: cur -= 5;
                 case "J".code: cur += 5;
                 case "M".code: cur = Std.int( items.length / 2 );
+                case "/".code: switch input("Search", Some(_sSearchPatt), 1) { case Success(s): cur = _searchInMenu(_sSearchPatt = s, _bInvertDirection = false, cur); case _: }
+                case "?".code: switch input("Search backwards", Some(_sSearchPatt), 1) { case Success(s): cur = _searchInMenu(_sSearchPatt = s, _bInvertDirection = true, cur); case _: }
+                case "n".code: cur = _searchInMenu(_sSearchPatt, _bInvertDirection, cur);
+                case "N".code: cur = _searchInMenu(_sSearchPatt, !_bInvertDirection, cur);
+                case 9 if (keyHavingTabOrNull != null): return Success( new Duet( "TAB", items[cur].ab() ));
                 case 13 | 10 if (!disableSelect): return Success( new Duet("select", items[cur].ab() ));
                 // it would take some time to also
                 // have arrows work.
@@ -434,4 +499,20 @@ class ModalAnsistral implements ansistral.modal.IModal {
         return Failure(new Error("Watchdog FKw48 should never happen"));
     }
 
+    /**
+     * ringMod(). A "ring" modulo.
+     * Why? -3 % 7 gives -3. 
+     * This is bad news when working with array length,
+     * we need an operation that would give us 7 - 3 = 4,
+     * to access arr[ringModulo(i)], that way array works like
+     * a ring.
+     */
+    public static function ringModulo(i:Int, len:Int) : Int {
+        var at = i % len;
+        return at >= 0
+            ? at
+            : len + at
+        ;
+    }
 }
+// vim: fdm=marker

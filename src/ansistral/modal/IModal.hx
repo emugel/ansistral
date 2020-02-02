@@ -105,7 +105,6 @@ interface IModal {
 
     /**
      * A sync menu with actions (in addition to the default "quit" and "select").
-     * TODO maybe async.
      * @param (Array<String> aAdditionalActions)
      *          E.g. ["&list", "&delete"]
      *          On TUI this will tip and accept 
@@ -120,6 +119,9 @@ interface IModal {
      *      You may ["-cancel", "-select"] or one of them only,
      *        to disable default selection or cancellation. This would
      *        allow creating weird hybrids.
+     *
+     *      "&\t:foo" is a special value for TAB key, displayed as "TAB:foo" and
+     *        recognized as the "TAB" action.
      * @param (pos) If not null, position will be used as identifier to recall
      *              offset of the cursor next time the menu would be called
      *              from the same exact location
