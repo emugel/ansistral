@@ -222,7 +222,6 @@ class ModalAnsistral implements ansistral.modal.IModal {
         return Failure(new Error("failed prompt"));
     }
 
-
     // vars for menu
     var _bInvertDirection : Bool;
     var _sSearchPatt : String;
@@ -244,8 +243,6 @@ class ModalAnsistral implements ansistral.modal.IModal {
      *   *   L: jump to bottom (low)
      *   H: jump to top (high)
      *   M: jump to middle
-     *
-     * @note With library slre, search will strip accents before comparing
      *
      * @param (Array<String> aAdditionalActions)
      *          E.g. ["&list", "&delete"]
@@ -340,17 +337,15 @@ class ModalAnsistral implements ansistral.modal.IModal {
 
             /**
              * Whether s2 matches s1.
-             * if -lib slre, strip accent before comparing
+             * Strip accent before comparing, keep asian and other chars.
              * @param (s1) The candidate
              * @param (s2) The (text) pattern
              *                        if `s2` contains no chars in `[A-Z]`, 
              *                        search is case-insensitive
              */
-            function _match(s1, s2) : Bool {
-                #if slre
-                s1 = grepsuzette.slre.Tools.stripAccents(s1);
-                s2 = grepsuzette.slre.Tools.stripAccents(s2);
-                #end
+            function _match(s1:String, s2:String) : Bool {
+                s1 = s1.stripAccents();
+                s2 = s2.stripAccents();
                 if (! ~/[A-Z]/.match(s2)) {
                     s1 = s1.toLowerCase();
                     s2 = s2.toLowerCase();

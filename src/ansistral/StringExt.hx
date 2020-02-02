@@ -148,6 +148,53 @@ class StringExt {
 	}
 
     /**
+     * Strip most common roman alphabet accents.
+     * This is a WIP.
+     */
+    public static function stripAccents(s:String) : String {
+        var buf = new StringBuf();
+        for (i in 0...s.length) {
+            buf.add(switch s.charAt(i) {
+                // These hopefully should cover most latin languages:
+                //   english, french, german, dutch, 
+                //   italian, portuguese, spanish, swedish, catalan,
+                //   lithuanian(is it latin?), maltese, welsch
+                // https://en.wikipedia.org/wiki/Diacritic#Other_languages
+
+                // grave  circ  acute caron macron diae tild
+                case "á" | "â" | "à" | "ǎ" | "ā" | "ä"  | "ã": "a";
+                case "é" | "ê" | "è" | "ě" | "ē" | "ë"       : "e";
+                case "í" | "î" | "ì" | "ǐ" | "ī" | "ï"       : "i";
+                case "ó" | "ô" | "ò" | "ǒ" | "ō" | "ö"  | "õ": "o";
+                case "ú" | "û" | "ù" | "ǔ" | "ū" | "ü"       : "u";
+                case "ẃ" | "ŵ" | "ẁ" |             "ẅ"       : "w"; // welsch 
+                case "ý" | "ŷ" | "ỳ" | /**/        "ÿ"       : "y";
+                case "Á" | "Â" | "À" | "Ǎ" | "Ā" | "Ä"  | "Ã": "A";
+                case "É" | "Ê" | "È" | "Ě" | "Ē" | "Ë"       : "E";
+                case "Í" | "Î" | "Ì" | "Ǐ" | "Ī" | "Ï"       : "I";
+                case "Ó" | "Ô" | "Ò" | "Ǒ" | "Ō" | "Ö"  | "Õ": "O";
+                case "Ú" | "Û" | "Ù" | "Ǔ" | "Ū" | "Ü"       : "U";
+                case "Ý" | "Ŷ" | "Ỳ" | /**/        "Ÿ"       : "Y";
+                case "Ẃ" | "Ŵ" | "Ẁ" |             "Ẅ"       : "W"; // welsch
+                case "å": "a";    // a WITH RING ABOVE (as in swedish)
+                case "Å": "A";    // A WITH RING ABOVE (as in swedish)
+                case "ñ": "n";
+                case "š": "s";    // carons in s and z appear in finnish
+                case "ž": "z";    // carons in s and z appear in finnish
+                case "¿" | "⋅": "";
+                case "Œ": "Oe";
+                case "œ": "oe";
+                case "Æ": "Ae";
+                case "æ": "ae";
+                case "ç": "c";
+                case "ß": "ss";
+                case xxx : xxx;
+            });
+        }
+        return buf.toString();
+    }
+
+    /**
      * Given String, split it into a Pair upon `charcode`, or fail.
      * This requires the String to contain exactly 1 occurence of char.
      * Only defined if tink_core is used.
