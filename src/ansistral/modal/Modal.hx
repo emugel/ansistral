@@ -84,6 +84,10 @@ class Modal {
         return _inst = impl;
     
     public static function enableInteractiveTUI() : ansistral.modal.IModal   // for convenience
+        #if sys
         return _inst = new ansistral.modal.impl.ModalAnsistral();
+        #else
+        throw "ansistral text UI only available from sys targets";
+        #end
 
 }

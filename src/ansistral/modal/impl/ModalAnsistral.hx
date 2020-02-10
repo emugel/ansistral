@@ -1,5 +1,5 @@
-#if sys
 package ansistral.modal.impl;
+#if sys
 
 import ansistral.modal.Modal;
 import tink.CoreApi;
