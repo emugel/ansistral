@@ -1,3 +1,4 @@
+#if sys
 package ansistral.modal.impl;
 
 import ansistral.modal.Modal;
@@ -180,10 +181,6 @@ class ModalAnsistral implements ansistral.modal.IModal {
         ?satisfyingCb  : String->Bool=null
     ) : Outcome<String, Error> 
     {
-        #if !sys
-        #error "input() is not yet available for non sys targets"
-        #end
-
         Sys.print(Ansi.cursor(MoveDown(999)));
         if (placeholder != null) {
             pp("-------------------------------------------------------");
@@ -534,4 +531,5 @@ class ModalAnsistral implements ansistral.modal.IModal {
         ;
     }
 }
+#end
 // vim: fdm=marker
