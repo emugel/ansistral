@@ -1,0 +1,24 @@
+
+
+public function promptYesNo(...) : Future<Bool>;
+public function confirm(...) : Bool;
+
+public function prompt(...) : Promise<String>;
+public function prompt(...) : Outcome<String, Error>;
+
+public function menu<T>(...) : Outcome<Duet<String, Duet<String, T>>, Error>;
+
+public static function main() {
+    var bool = gui.confirm();
+
+    var bool;
+    var await = true;
+    gui.promptYesNo().handle(function(bool) {
+        bool = r;
+        await = false;
+    }
+    while (await) Sys.sleep(0.050);
+
+
+
+}

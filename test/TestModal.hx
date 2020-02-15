@@ -200,12 +200,13 @@ class TestModal extends haxe.unit.TestCase {
     function test_tui_menu() {
         Modal.enableInteractiveTUI();
         var tui = Modal.getInstance();
-
+        var a = [ "mon", "tues", "wednes", "thurs", "fri", "sat", "sun" ];
         switch tui.menu(
-            [ "mon", "tues", "wednes", "thurs", "fri", "sat", "sun" ]
-                .map(s -> new Duet( s+"day", s )),
+            a.map(s -> new Duet( s + "day", s )),
             "what's the longest day name? (thursday is grayed out)",
-            t -> t+"day".length == "thursday".length ? [GrayedOut] : []
+            [],
+            null,
+            s -> (s.length + 3 == "wednesday".length ? [GrayedOut] : [])  // grayout days of 9 letters
         ) {
             case Success(duet_action_duetStringT):
                 switch duet_action_duetStringT.a {
